@@ -14,8 +14,8 @@ function [taskNames, taskEvents, taskSpikes] = extractNEVData(NEV)
 
     % for testing
     if nargin < 1
-        nevFile ='zaina_practice_20190711_4';      	% .nev file (don't include .nev extension)
-        directory = '/Users/maunsell/Desktop/ephys-analyses/';  % directory for .nev file
+        nevFile ='zaina_practice_20190809';      	% .nev file (don't include .nev extension)
+        directory = '/Users/maunsell/Desktop/';  % directory for .nev file
         NEV = readNEV(strcat(directory, nevFile, '.nev'));      % read .nev file
     end
 
@@ -55,9 +55,9 @@ function [taskNames, taskEvents, taskSpikes] = extractNEVData(NEV)
             event.time = timeS(index);
             event.data = data(index);
             if ~isfield(events(t), eventName)                   % first occurrence this trial
-                events(t).(eventName) = event;
+                events(t).(eventName{1}) = event;
             else                                                % multiple occurrences this trial
-             	events(t).(eventName) = [events(t).(eventName) event];
+             	events(t).(eventName{1}) = [events(t).(eventName{1}) event];
             end
         end
     end

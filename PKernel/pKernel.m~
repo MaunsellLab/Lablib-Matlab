@@ -1,0 +1,21 @@
+function pKernel
+
+    numBins = 100;                                          % number of bins
+    noiseFactor = 1.0;                                      % noise magnitude relative to signal perturbation
+    kernel = zeros(1, numBins);
+    kernel(20) = 0.5;
+    kernel(80) = -0.5;
+    midPoint = numBins / 2;
+    kernel(midPoint - 10:midPoint - 1) = -1.0:0.1:-0.1;
+    kernel(midPoint:midPoint + 9) = 1;
+
+    figure(1);
+    clf;
+    subplot(4, 3, 1, 'replace');
+    plot(kernel);
+    title('Kernel');
+    
+    doDistributions(kernel, noiseFactor, 'Uniform');
+    doDistributions(kernel, noiseFactor, 'Binary');
+    doDistributions(kernel, noiseFactor, 'Gaussian');
+end

@@ -1,4 +1,4 @@
-function doDistributions(kernel, noiseFactor)
+function doVariance(kernel, noiseFactor)
 %{
 The random stimulus on every trial (uniform, binary, Gaussian) has a mean of 1.0, so it adjusts the gain of the 
 kernel randomly over time. To keep responses balanced at 50% regardless of the kernel, we find the expected value of 
@@ -9,16 +9,16 @@ If the mean and variance of the stimulus noise is the same, the performance is p
 some sense, because the variance is really the signal that we are trying to measure.
 %}
 
-    setUpFigure(1, kernel, 'Effects of Stimulus Distribution');
-   
-    doOneDist(kernel, noiseFactor, 'Uniform');
-    doOneDist(kernel, noiseFactor, 'Binary');
-    doOneDist(kernel, noiseFactor, 'Gaussian');
+    setUpFigure(2, kernel, 'Effects of Stimulus Variance');
+    for s = 1:9
+        doOneSD(s, kernel, noiseFactor, 'Binary');
+    end
 end
 
 %%
-function doOneDist(kernel, noiseFactor, distName)
+function doOneSD(sIndex, kernel, noiseFactor, distName)
 
+    SDs = [8.0, 4.0, 2.0, 1.0, 0.5, 0.4, 0.3, 0.02, 0.01];
     threshold = sum(kernel);
     bins = length(kernel);
     posKernel = zeros(1, bins);
@@ -27,13 +27,13 @@ function doOneDist(kernel, noiseFactor, distName)
     negShuffle = zeros(1, bins);
     numPos = 0;
     numNeg = 0;
-    reps = 50000;
+    reps = 10000;
     stimMean = zeros(1, reps);
     stimSD = zeros(1, reps);
-    stim = getRandom(1.0, 0.5, distName, bins);          	% preload for shuffle
+    stim = getRandom(1.0, SDs(sIndex), distName, bins);          	% preload for shuffle
     for r = 1:reps
         shuffle = stim;                         % take last stim to use in shuffle
-        stim = getRandom(1.0, 0.5, distName, bins);
+        stim = getRandom(1.0, SDs(sIndex), distName, bins);
         stimMean(r) = mean(stim);
         stimSD(r) = std(stim);
         product = kernel .* stim;
@@ -49,8 +49,7 @@ function doOneDist(kernel, noiseFactor, distName)
             numNeg = numNeg + 1;
         end
     end
-    col = find(ismember({'Uniform', 'Binary', 'Gaussian'}, distName) == 1);
-    subplot(4, 3, 3 + col, 'replace');
+    subplot(4, 3, sIndex + 3, 'replace');
     sigLevel = 2.0 * std(posShuffle / numPos - negShuffle / numNeg);
     fill([0, bins, bins, 0],[-sigLevel, -sigLevel, sigLevel, sigLevel], [0.95 0.95 0.95], 'LineStyle', ':');
     hold on;
@@ -59,18 +58,6 @@ function doOneDist(kernel, noiseFactor, distName)
     rho = corrcoef(kernel, posKernel / numPos - negKernel / numNeg);
     displayText({sprintf('stim mean: %.3f', mean(stimMean)), sprintf('stim SD: %.3f', mean(stimSD)), ...
         sprintf('r = %.4f', rho(1, 2))});
-    subplot(4, 3, 6 + col, 'replace');
-    plot(posKernel / numPos);
-    title(sprintf('%s + Kernel (n=%d)', distName, numPos));    
-    rho = corrcoef(kernel, posKernel);
-    displayText(sprintf('r = %.3f', rho(1, 2)));
-    
-    subplot(4, 3, 9 + col, 'replace');
-    plot(negKernel / numNeg);
-    title(sprintf('%s - Kernel (n=%d)', distName, numNeg));    
-    rho = corrcoef(kernel, negKernel);
-    displayText(sprintf('r = %.3f', rho(1, 2)));
-    
     drawnow;
 end
 

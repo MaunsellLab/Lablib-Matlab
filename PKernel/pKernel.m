@@ -9,6 +9,6 @@ function pKernel
     kernel(midPoint - 10:midPoint - 1) = -1.0:0.1:-0.1;
     kernel(midPoint:midPoint + 9) = 1;
     
-    doDistributions(kernel, noiseFactor);               % effect of noise distributions (uniform, binary, Gaussian)
-
+    doDistributions(kernel, noiseFactor);               % effect of stim noise distributions (uniform, binary, Gaussian)
+    doVariance(kernel, noiseFactor);                    % effect of stim noise variance
 end

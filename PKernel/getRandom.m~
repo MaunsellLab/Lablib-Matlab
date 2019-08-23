@@ -1,0 +1,17 @@
+function stim = getRandom(distName, bins)
+
+
+    mean = 1.0;
+    sd = 0.5;
+    
+    switch distName                                      % make distributions from 0:2
+        case 'Uniform'
+            stim = rand(1, bins) * mean / 0.5;
+        case 'Binary'
+            stim = randi([0 1], [1, bins]) * mean / 0.5;
+        case 'Gaussian'
+            stim = randn(1, bins) / 2 + 1.0;
+        otherwise
+            error('Unrecognized column value');
+    end
+end

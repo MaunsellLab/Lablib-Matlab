@@ -50,33 +50,14 @@ function doOneDist(kernel, noiseFactor, distName)
         end
     end
     col = find(ismember({'Uniform', 'Binary', 'Gaussian'}, distName) == 1);
-    subplot(4, 3, 3 + col, 'replace');
-    sigLevel = 2.0 * std(posShuffle / numPos - negShuffle / numNeg);
-    fill([0, bins, bins, 0],[-sigLevel, -sigLevel, sigLevel, sigLevel], [0.95 0.95 0.95], 'LineStyle', ':');
-    hold on;
-    plot(posKernel / numPos - negKernel / numNeg, 'k');
-    title(sprintf('%s Kernel (n=%d)', distName, numPos + numNeg));
-    rho = corrcoef(kernel, posKernel / numPos - negKernel / numNeg);
-    displayText({sprintf('stim mean: %.3f', mean(stimMean)), sprintf('stim SD: %.3f', mean(stimSD)), ...
-        sprintf('r = %.4f', rho(1, 2))});
-    subplot(4, 3, 6 + col, 'replace');
-    plot(posKernel / numPos);
-    title(sprintf('%s + Kernel (n=%d)', distName, numPos));    
-    rho = corrcoef(kernel, posKernel);
-    displayText(sprintf('r = %.3f', rho(1, 2)));
     
-    subplot(4, 3, 9 + col, 'replace');
-    plot(negKernel / numNeg);
-    title(sprintf('%s - Kernel (n=%d)', distName, numNeg));    
-    rho = corrcoef(kernel, negKernel);
-    displayText(sprintf('r = %.3f', rho(1, 2)));
+    plotText = {sprintf('stim mean: %.3f', mean(stimMean)), sprintf('stim SD: %.3f', mean(stimSD))};
+    titleText = sprintf('%s Kernel (n=%d)', distName, numPos + numNeg);
+	doOnePlot(col, kernel, posKernel / numPos - negKernel / numNeg, plotText, titleText);
     
+	doOnePlot(col + 3, kernel, posKernel / numPos, cell(0), sprintf('%s + Kernel (n=%d)', distName, numPos));
+    doOnePlot(col + 6, kernel, negKernel / numNeg, cell(0), sprintf('%s - Kernel (n=%d)', distName, numNeg));
+
     drawnow;
 end
 
-%%
-function displayText(theText)
-
-    lim = axis;
-    text(lim(1) + 0.05 * (lim(2) - lim(1)), lim(4) - 0.025 * (lim(4) - lim(3)), theText, 'VerticalAlignment', 'top');
-end

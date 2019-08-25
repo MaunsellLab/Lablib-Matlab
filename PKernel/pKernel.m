@@ -2,6 +2,9 @@ function pKernel
 
     numBins = 100;                                      % number of bins
     noiseFactor = 1.0;                                  % noise magnitude relative to signal perturbation
+    
+    % make the kernel to find
+    
     kernel = zeros(1, numBins);
     kernel(20) = 0.5;
     kernel(80) = -0.5;

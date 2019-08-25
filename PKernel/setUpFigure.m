@@ -1,5 +1,6 @@
 %%
 function setUpFigure(figureNum, kernel, headerText)
+% Prepare a page of plots by displaying the header and plotting the profile of the kernel to find.
 
     f = figure(figureNum);
     f.Units = 'inches';
@@ -13,5 +14,4 @@ function setUpFigure(figureNum, kernel, headerText)
     plot(kernel);
     title('Actual Kernel');
     drawnow;
-
 end

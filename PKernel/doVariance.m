@@ -9,16 +9,18 @@ If the mean and variance of the stimulus noise is the same, the performance is p
 some sense, because the variance is really the signal that we are trying to measure.
 %}
 
-    setUpFigure(2, kernel, 'Effects of Stimulus Variance');
+    reps = 10000;
+    setUpFigure(2, kernel, 'Effects of Stimulus Variance', {sprintf('Noise factor: %.2f', noiseFactor),...
+        sprintf('%d repetions per condition', reps)});
     for s = 1:9
-        doOneSD(s, kernel, noiseFactor, 'Binary');
+        doOneSD(s, kernel, noiseFactor, reps, 'Binary');
     end
 end
 
 %%
-function doOneSD(sIndex, kernel, noiseFactor, distName)
+function doOneSD(sIndex, kernel, noiseFactor, reps, distName)
 
-    SDs = [8.0, 4.0, 2.0, 1.0, 0.5, 0.4, 0.3, 0.02, 0.01];
+    SDs = [8.0, 4.0, 2.0, 1.0, 0.5, 0.4, 0.3, 0.2, 0.1];
     threshold = sum(kernel);
     bins = length(kernel);
     posKernel = zeros(1, bins);
@@ -27,7 +29,6 @@ function doOneSD(sIndex, kernel, noiseFactor, distName)
     negShuffle = zeros(1, bins);
     numPos = 0;
     numNeg = 0;
-    reps = 10000;
     stimMean = zeros(1, reps);
     stimSD = zeros(1, reps);
     stim = getRandom(1.0, SDs(sIndex), distName, bins);          	% preload for shuffle
@@ -49,14 +50,8 @@ function doOneSD(sIndex, kernel, noiseFactor, distName)
             numNeg = numNeg + 1;
         end
     end
-%     subplot(4, 3, sIndex + 3, 'replace');
-%     sigLevel = 2.0 * std(posShuffle / numPos - negShuffle / numNeg);
-%     fill([0, bins, bins, 0],[-sigLevel, -sigLevel, sigLevel, sigLevel], [0.95 0.95 0.95], 'LineStyle', ':');
-%     hold on;
-%     plot(posKernel / numPos - negKernel / numNeg, 'k');
-    titleText = sprintf('%s Kernel (n=%d)', distName, numPos + numNeg);
-%     rho = corrcoef(kernel, posKernel / numPos - negKernel / numNeg);
-    plotText = {sprintf('stim mean: %.3f', mean(stimMean)), sprintf('stim SD: %.3f', mean(stimSD))};
+    titleText = sprintf('%s SD %.2f', distName, mean(stimSD));
+    plotText = {sprintf('stim mean: %.3f', mean(stimMean))};
 
 	doOnePlot(sIndex, kernel, posKernel / numPos - negKernel / numNeg, plotText, titleText);
 

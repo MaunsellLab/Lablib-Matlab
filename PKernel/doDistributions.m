@@ -9,15 +9,16 @@ If the mean and variance of the stimulus noise is the same, the performance is p
 some sense, because the variance is really the signal that we are trying to measure.
 %}
 
-    setUpFigure(1, kernel, 'Effects of Stimulus Distribution');
-   
-    doOneDist(kernel, noiseFactor, 'Uniform');
-    doOneDist(kernel, noiseFactor, 'Binary');
-    doOneDist(kernel, noiseFactor, 'Gaussian');
+    reps = 10000;
+    setUpFigure(1, kernel, 'Effects of Stimulus Distribution', {sprintf('Noise factor: %.2f', noiseFactor),...
+        sprintf('%d repetions per condition', reps)});
+    doOneDist(kernel, noiseFactor, 'Uniform', reps);
+    doOneDist(kernel, noiseFactor, 'Binary', reps);
+    doOneDist(kernel, noiseFactor, 'Gaussian', reps);
 end
 
 %%
-function doOneDist(kernel, noiseFactor, distName)
+function doOneDist(kernel, noiseFactor, distName, reps)
 
     threshold = sum(kernel);
     bins = length(kernel);
@@ -27,7 +28,6 @@ function doOneDist(kernel, noiseFactor, distName)
     negShuffle = zeros(1, bins);
     numPos = 0;
     numNeg = 0;
-    reps = 50000;
     stimMean = zeros(1, reps);
     stimSD = zeros(1, reps);
     stim = getRandom(1.0, 0.5, distName, bins);          	% preload for shuffle
@@ -52,11 +52,11 @@ function doOneDist(kernel, noiseFactor, distName)
     col = find(ismember({'Uniform', 'Binary', 'Gaussian'}, distName) == 1);
     
     plotText = {sprintf('stim mean: %.3f', mean(stimMean)), sprintf('stim SD: %.3f', mean(stimSD))};
-    titleText = sprintf('%s Kernel (n=%d)', distName, numPos + numNeg);
+    titleText = sprintf('%s', distName);
 	doOnePlot(col, kernel, posKernel / numPos - negKernel / numNeg, plotText, titleText);
     
-	doOnePlot(col + 3, kernel, posKernel / numPos, cell(0), sprintf('%s + Kernel (n=%d)', distName, numPos));
-    doOnePlot(col + 6, kernel, negKernel / numNeg, cell(0), sprintf('%s - Kernel (n=%d)', distName, numNeg));
+	doOnePlot(col + 3, kernel, posKernel / numPos, cell(0), sprintf('%s Pos. (n=%d)', distName, numPos));
+    doOnePlot(col + 6, kernel, negKernel / numNeg, cell(0), sprintf('%s Neg. (n=%d)', distName, numNeg));
 
     drawnow;
 end

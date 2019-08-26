@@ -2,7 +2,7 @@ function pKernel
 
     numBins = 100;                                      % number of bins
     noiseFactor = 1.0;                                  % noise magnitude relative to signal perturbation
-    
+    stimVariance = 1.0;
     % make the kernel to find
     
     kernel = zeros(1, numBins);
@@ -13,4 +13,5 @@ function pKernel
     kernel(midPoint:midPoint + 9) = 1;
     doDistributions(kernel, noiseFactor);               % effect of stim noise distributions (uniform, binary, Gaussian)
     doVariance(kernel, noiseFactor);                    % effect of stim noise variance
+    doNoise(kernel, stimVariance);                      % effect of external noise variance
 end

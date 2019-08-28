@@ -2,7 +2,7 @@ function doOnePlot(index, kernel, kData, plotText, titleText, sigLevel)
 
     bins = length(kData);
     subplot(4, 3, index + 3, 'replace');
-    if (nargin > 6)
+    if (nargin > 5)
         fill([0, bins, bins, 0],[-sigLevel, -sigLevel, sigLevel, sigLevel], [0.95 0.95 0.95], 'LineStyle', ':');
         hold on;
     end

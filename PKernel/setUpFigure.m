@@ -4,7 +4,7 @@ function setUpFigure(figureNum, kernel, titleText, headerText)
 
     f = figure(figureNum);
     f.Units = 'inches';
-    f.Position = [20, 5, 8.5, 11];
+    f.Position = [25, 7, 8.5, 11];
     clf;
     h = subplot(4, 3, 1);
     set(h, 'Visible', 'off');

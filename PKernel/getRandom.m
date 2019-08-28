@@ -7,7 +7,6 @@ function stim = getRandom(distMean, distSD, distName, bins)
             stim = randi([0 1], [1, bins]) * distSD / 0.5 + (distMean - distSD);
         case 'Gaussian'
             stim = randn(1, bins) * distSD + distMean;
-%             fprintf('mean %.2f std %.2f\n', mean(stim), std(stim));
         otherwise
             error('Unrecognized column value');
     end

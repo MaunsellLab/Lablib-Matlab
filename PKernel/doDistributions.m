@@ -10,7 +10,7 @@ some sense, because the variance is really the signal that we are trying to meas
 %}
 
     reps = 10000;
-    setUpFigure(1, kernel, 'Effects of Stimulus Distribution', {sprintf('Noise factor: %.2f', noiseFactor),...
+    setUpFigure(2, kernel, 'Effects of Stimulus Distribution', {sprintf('Noise factor: %.2f', noiseFactor),...
         sprintf('%d repetions per condition', reps)});
     doOneDist(kernel, noiseFactor, 'Uniform', reps);
     doOneDist(kernel, noiseFactor, 'Binary', reps);
@@ -20,6 +20,7 @@ end
 %%
 function doOneDist(kernel, noiseFactor, distName, reps)
 
+    col = find(ismember({'Uniform', 'Binary', 'Gaussian'}, distName) == 1);
     threshold = sum(kernel);
     bins = length(kernel);
     posKernel = zeros(1, bins);
@@ -33,11 +34,18 @@ function doOneDist(kernel, noiseFactor, distName, reps)
     stim = getRandom(1.0, 0.5, distName, bins);          	% preload for shuffle
     for r = 1:reps
         shuffle = stim;                         % take last stim to use in shuffle
-        stim = getRandom(1.0, 0.5, distName, bins);
+        stim = (1.0, 0.5, distName, bins);
         stimMean(r) = mean(stim);
         stimSD(r) = std(stim);
         product = kernel .* stim;
-        noise = randn(1, bins) * noiseFactor + 1.0;
+        switch distName
+            case 'Uniform'
+                noise = rand(1, bins) * noiseFactor + 1.0;
+            case 'Binary'
+                noise = randi([0 1], 1, bins) * noiseFactor + 1.0;
+           case 'Gaussian'
+                noise = randn(1, bins) * noiseFactor + 1.0;
+        end
         product = product .* noise;
         if sum(product) >= threshold
             posKernel = posKernel + stim;
@@ -49,14 +57,11 @@ function doOneDist(kernel, noiseFactor, distName, reps)
             numNeg = numNeg + 1;
         end
     end
-    col = find(ismember({'Uniform', 'Binary', 'Gaussian'}, distName) == 1);
-    
     plotText = {sprintf('stim mean: %.3f', mean(stimMean)), sprintf('stim SD: %.3f', mean(stimSD))};
     titleText = sprintf('%s', distName);
-	doOnePlot(col, kernel, posKernel / numPos - negKernel / numNeg, plotText, titleText);
-    
-	doOnePlot(col + 3, kernel, posKernel / numPos, cell(0), sprintf('%s Pos. (n=%d)', distName, numPos));
-    doOnePlot(col + 6, kernel, negKernel / numNeg, cell(0), sprintf('%s Neg. (n=%d)', distName, numNeg));
+	doOnePlot(col + 3, kernel, posKernel / numPos - negKernel / numNeg, plotText, titleText);
+	doOnePlot(col + 6, kernel, posKernel / numPos, cell(0), sprintf('%s Pos. (n=%d)', distName, numPos));
+    doOnePlot(col + 9, kernel, negKernel / numNeg, cell(0), sprintf('%s Neg. (n=%d)', distName, numNeg));
 
     drawnow;
 end

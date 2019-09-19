@@ -5,9 +5,7 @@ Plot psychometric performance based on the kernel
 
 %}
 
-% NEED TO PLOT UNSTIMULUATED AND STIMULATED TRIALS
-
-    reps = 1000;
+    reps = 10000;
     setUpFigure(1, kernel, 'Behavioral Performance', {sprintf('%d repetions per condition', reps),...
         sprintf('Stim noise factor: %.2f', stimNoise)});
     
@@ -16,34 +14,70 @@ Plot psychometric performance based on the kernel
     stimProfile = zeros(1, numBins);
     midPoint = numBins / 2;
     stimProfile(midPoint:midPoint + 20) = 1.0;
-    stimValues = [0.03125, 0.0625, 0.125, 0.25, 0.5, 1.0];
-    stimProfiles = stimProfile' * stimValues;
+%     stimValues = [0.03, 0.04, 0.05, 0.075, 0.1, 0.2];
+    stimValues = 0.05:0.01:0.10;
+    numValues = length(stimValues);
+    stimProfiles = (stimProfile' * stimValues)';
     
     % set the threshold to the midpoint stimulus
-    threshold = sum(kernel .* stimProfiles(:, 3));
-
-    subplot(4, 3, 6, 'replace');
-    plot(stimProfiles);
-    title('Stimulus Profiles');
+    if mod(numValues, 2) > 0
+        threshold = sum(kernel .* stimProfiles(numValues / 2 + 1, :));
+    else
+        threshold = sum(kernel .* (stimProfiles(numValues / 2, :) + stimProfiles(numValues / 2 + 1, :)) / 2);
+    end
+    
+    % plot stimulus profiles
+    hs = subplot(4, 3, 4, 'replace');
+    plot(stimProfiles');
+    ylStim = ylim;
+    title('Stimuli');
+    % plot examples of the minimum stimulus plus stimulus noise
+    numDemo = 10;
+    noisyProfiles = zeros(numDemo, numBins);
+    for p = 1:numDemo
+        noisyProfiles(p, :) = profilePlusNoise(stimProfiles(1, :), stimNoise, 0.0);
+    end
+    hn = subplot(4, 3, 5, 'replace');
+    plot(noisyProfiles', 'b');
+    ylNoise = ylim;
+    title('Min Stim+Noise');
+    % plot examples of the minimum stimulus plus opto noise
+    numDemo = 10;
+    noisyProfiles = zeros(numDemo, numBins);
+    for p = 1:numDemo
+        noisyProfiles(p, :) = profilePlusNoise(stimProfiles(1, :), 0.0, optoPower);
+    end
+    ho = subplot(4, 3, 6, 'replace');
+    plot(noisyProfiles', 'b');
+    ylOpto = ylim;
+    title('Min Stim+Opto');
+    % scale the stimulus plots to the same height
+    yMax = max([ylNoise, ylOpto, ylStim]);
+    yMin = min([ylNoise, ylOpto, ylStim]);
+    ylim(hs, [yMin, yMax]);
+    ylim(hn, [yMin, yMax]);
+    ylim(ho, [yMin, yMax]);
     
     hits = zeros(1, length(stimValues));
     noStimHits = zeros(1, length(stimValues));
     for s = 1:length(stimValues)
-        [hits(s), noStimHits(s)] = doOneStimulus(s, kernel, threshold, stimProfiles, stimNoise, optoPower, 'Binary', reps);
+        [hits(s), noStimHits(s), rho] = doOneStimulus(s, kernel, threshold, stimProfiles, stimNoise, optoPower, reps);
     end
-    subplot(4, 3, 5, 'replace');
-    p = semilogx(stimValues, hits, '-or', 'MarkerSize', 6, 'MarkerEdgeColor', 'r', ...
+    % plot the psychometric function
+    subplot(4, 3, 2, 'replace');
+    semilogx(stimValues, hits, '-or', 'MarkerSize', 6, 'MarkerEdgeColor', 'r', ...
         'MarkerFaceColor', [1,0.25,0.25]);
     hold on;
-    p = semilogx(stimValues, noStimHits, '-ob', 'MarkerSize', 6, 'MarkerEdgeColor', 'b', ...
+    semilogx(stimValues, noStimHits, '-ob', 'MarkerSize', 6, 'MarkerEdgeColor', 'b', ...
         'MarkerFaceColor', [0.25,0.25,1.0]);
 	axis([-inf, inf, 0, 1]);
     title('Behavior');
 end
 
 %%
-function [stimHits, noStimHits] = doOneStimulus(index, kernel, threshold, stimProfiles, noiseFactor, optoPower, distName, reps)
+function [stimHits, noStimHits, rho] = doOneStimulus(index, kernel, threshold, stimProfiles, noiseFactor, optoPower, reps)
 
+    distName = 'Binary';
     bins = length(kernel);
     posKernel = zeros(1, bins);
     negKernel = zeros(1, bins);
@@ -54,9 +88,9 @@ function [stimHits, noStimHits] = doOneStimulus(index, kernel, threshold, stimPr
     noStimHits = 0;
     stimMean = zeros(1, reps);
     stimSD = zeros(1, reps);
-    optoStim = getRandom(optoPower, abs(optoPower) / 2, distName, bins);          	% preload for shuffle
+    optoStim = getRandom(optoPower, abs(optoPower) / 2, distName, bins);        % preload for shuffle
     for r = 1:reps
-     	noisyStim = stimProfiles(:, index)' + (rand(1, bins) * noiseFactor);        % visual stim always Gaussion noise
+        noisyStim = profilePlusNoise(stimProfiles(index, :), noiseFactor, 0.0); % zero optoPower for noStim test
         % response without opto stim
         if sum(kernel .* noisyStim) > threshold
             noStimHits = noStimHits + 1;
@@ -77,19 +111,24 @@ function [stimHits, noStimHits] = doOneStimulus(index, kernel, threshold, stimPr
             numNeg = numNeg + 1;
         end
     end
-%     col = find(ismember({'Uniform', 'Binary', 'Gaussian'}, distName) == 1);
-    
-    if numPos > 0 && numNeg > 0
-        plotText = {sprintf('stim mean: %.3f', mean(stimMean)), sprintf('stim SD: %.3f', mean(stimSD))};
-        titleText = sprintf('%s', distName);
-        shuffleSEM = sqrt(std(posShuffle / numPos)^2 + std(negShuffle / numNeg)^2);
-        doOnePlot(index + 6, kernel, posKernel / numPos - negKernel / numNeg, plotText, titleText, shuffleSEM);
-    end
     noStimHits = noStimHits / reps;
     stimHits = numPos / reps;
-% 	doOnePlot(col + 3, kernel, posKernel / numPos, cell(0), sprintf('%s Pos. (n=%d)', distName, numPos));
-%     doOnePlot(col + 6, kernel, negKernel / numNeg, cell(0), sprintf('%s Neg. (n=%d)', distName, numNeg));
 
-    drawnow;
+    if numPos > 0 && numNeg > 0
+        plotText = {sprintf('H: %d M: %d', numPos, numNeg)};
+        titleText = sprintf('%s', distName);
+        shuffleSEM = sqrt(std(posShuffle / numPos)^2 + std(negShuffle / numNeg)^2);
+        rho = doOnePlot(index + 6, kernel, posKernel / numPos - negKernel / numNeg, plotText, titleText, shuffleSEM);
+        drawnow;
+    else
+        rho = 0;
+    end
+end
+
+%%
+function noisyProfile = profilePlusNoise(stimProfile, stimNoise, optoNoise)
+        
+    noisyProfile = stimProfile * exp((rand - 0.5) * stimNoise) + ...
+        getRandom(0.0, 1.0, 'Binary', length(stimProfile)) * optoNoise;
 end
 

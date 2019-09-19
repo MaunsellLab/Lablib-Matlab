@@ -1,4 +1,4 @@
-function doOnePlot(index, kernel, kData, plotText, titleText, sigLevel)
+function rho = doOnePlot(index, kernel, kData, plotText, titleText, sigLevel)
 
     bins = length(kData);
     subplot(4, 3, index, 'replace');
@@ -7,7 +7,8 @@ function doOnePlot(index, kernel, kData, plotText, titleText, sigLevel)
         hold on;
     end
     plot(kData, 'k');
-    rho = corrcoef(kernel, kData);
-    plotText{length(plotText) + 1} = sprintf('r = %.4f', rho(1, 2));
+    r = corrcoef(kernel, kData);
+    rho = r(1, 2);
+    plotText{length(plotText) + 1} = sprintf('r = %.2f', rho);
     doPlotText(titleText, plotText);
 end

@@ -53,7 +53,7 @@ function doOneNoise(sIndex, kernel, stimSD, reps, distName)
     titleText = sprintf('%s SD %.2f', distName, noiseSDs(sIndex));
     plotText = {sprintf('stim mean: %.3f', mean(stimulusMean))};
 
-	doOnePlot(sIndex, kernel, posKernel / numPos - negKernel / numNeg, plotText, titleText);
+	doOnePlot(sIndex + 3, kernel, posKernel / numPos - negKernel / numNeg, plotText, titleText);
 
     drawnow;
 end

@@ -1,4 +1,4 @@
-function doDistributions(kernel, noiseFactor)
+function doDistributions(kernel, stimProfile, stimNoise)
 %{
 The random stimulus on every trial (uniform, binary, Gaussian) has a mean of 1.0, so it adjusts the gain of the 
 kernel randomly over time. To keep responses balanced at 50% regardless of the kernel, we find the expected value of 
@@ -10,15 +10,16 @@ some sense, because the variance is really the signal that we are trying to meas
 %}
 
     reps = 10000;
-    setUpFigure(2, kernel, 'Effects of Stimulus Distribution', {sprintf('Noise factor: %.2f', noiseFactor),...
+    setUpFigure(2, kernel, 'Effects of Stimulus Distribution', {sprintf('Noise factor: %.2f', stimNoise),...
         sprintf('%d repetions per condition', reps)});
-    doOneDist(kernel, noiseFactor, 'Uniform', reps);
-    doOneDist(kernel, noiseFactor, 'Binary', reps);
-    doOneDist(kernel, noiseFactor, 'Gaussian', reps);
+
+    doOneDist(kernel, stimProfile, stimNoise, 'Uniform', reps);
+    doOneDist(kernel, stimProfile, stimNoise, 'Binary', reps);
+    doOneDist(kernel, stimProfile, stimNoise, 'Gaussian', reps);
 end
 
 %%
-function doOneDist(kernel, noiseFactor, distName, reps)
+function doOneDist(kernel, stimProfile, stimNoise, distName, reps)
 
     col = find(ismember({'Uniform', 'Binary', 'Gaussian'}, distName) == 1);
     threshold = sum(kernel);
@@ -31,28 +32,32 @@ function doOneDist(kernel, noiseFactor, distName, reps)
     numNeg = 0;
     stimMean = zeros(1, reps);
     stimSD = zeros(1, reps);
-    stim = getRandom(1.0, 0.5, distName, bins);          	% preload for shuffle
+%     stim = getRandom(1.0, 0.5, distName, bins);          	% preload for shuffle
+	[~, optoStim] = profilePlusNoise(stimProfile, stimNoise, 0.5, distName);    % preload for shuffle
     for r = 1:reps
-        shuffle = stim;                         % take last stim to use in shuffle
-        stim = (1.0, 0.5, distName, bins);
-        stimMean(r) = mean(stim);
-        stimSD(r) = std(stim);
-        product = kernel .* stim;
-        switch distName
-            case 'Uniform'
-                noise = rand(1, bins) * noiseFactor + 1.0;
-            case 'Binary'
-                noise = randi([0 1], 1, bins) * noiseFactor + 1.0;
-           case 'Gaussian'
-                noise = randn(1, bins) * noiseFactor + 1.0;
-        end
-        product = product .* noise;
-        if sum(product) >= threshold
-            posKernel = posKernel + stim;
+        shuffle = optoStim;                         % take last stim to use in shuffle
+    	[noisyStim, optoStim] = profilePlusNoise(stimProfile, stimNoise, 0.5, distName);    % preload for shuffle
+%        stim = (1.0, 0.5, distName, bins);
+        stimMean(r) = mean(optoStim);
+        stimSD(r) = std(optoStim);
+        response = sum(kernel .* noisyStim);  
+%        product = kernel .* stim;
+%         switch distName
+%             case 'Uniform'
+%                 noise = rand(1, bins) * noiseFactor + 1.0;
+%             case 'Binary'
+%                 noise = randi([0 1], 1, bins) * noiseFactor + 1.0;
+%            case 'Gaussian'
+%                 noise = randn(1, bins) * noiseFactor + 1.0;
+%         end
+%         product = product .* noise;
+%         if sum(product) >= threshold
+        if response >= threshold
+            posKernel = posKernel + optoStim;
             posShuffle = posShuffle + shuffle;
             numPos = numPos + 1;
         else
-            negKernel = negKernel + stim;
+            negKernel = negKernel + optoStim;
             negShuffle = negShuffle + shuffle;
             numNeg = numNeg + 1;
         end

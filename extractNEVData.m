@@ -14,7 +14,7 @@ function [taskNames, taskEvents, taskSpikes] = extractNEVData(NEV)
 
     % for testing
     if nargin < 1
-        nevFile ='zaina_practice_20190809';      	% .nev file (don't include .nev extension)
+        nevFile ='191213';      	% .nev file (don't include .nev extension)
         directory = '/Users/maunsell/Desktop/';  % directory for .nev file
         NEV = readNEV(strcat(directory, nevFile, '.nev'));      % read .nev file
     end
@@ -47,6 +47,10 @@ function [taskNames, taskEvents, taskSpikes] = extractNEVData(NEV)
             if codes(index) == endCode                          % end of trial, process & quit            
                 events(t).trialEnd.timeS = timeS(index);
                 events(t).trialEnd.data = data(index);
+                break;
+            end
+            if codes(index) == startCode
+                fprintf('Warning: ''trialStart'' with no ''trialEnd''. Trial %d index %d', t, index);
                 break;
             end
             eventIndex = find(dict.codes == codes(index), 1);

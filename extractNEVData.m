@@ -14,7 +14,7 @@ function [taskNames, taskEvents, taskSpikes] = extractNEVData(NEV)
 
     % for testing
     if nargin < 1
-        nevFile ='191213';      	% .nev file (don't include .nev extension)
+        nevFile ='200217_OKernel_Test';      	% .nev file (don't include .nev extension)
         directory = '/Users/maunsell/Desktop/';  % directory for .nev file
         NEV = readNEV(strcat(directory, nevFile, '.nev'));      % read .nev file
     end
@@ -94,9 +94,14 @@ function [taskNames, taskEvents, taskSpikes] = extractNEVData(NEV)
     end
     
 % % Saving the NEV file .mat
+
+clear codes data dict dEventIndices dEvents endCode endTime event eventCounts events eventIndex eventName index NEV ...
+    spikes startCode startIndices startTime t taskCodes taskCodesStruct taskEnds taskStart timeS
+
 % sessionId = input('Enter MouseID and Date: ', 's');
-% filestr = strcat(sessionId,'_','NEV','.mat');
-% save([direct filestr]);
+% fileName = strcat(sessionId,'_','NEV','.mat');
+fileName = strcat(nevFile,'_','NEV','.mat');
+save([directory fileName]);
 
 end 
 

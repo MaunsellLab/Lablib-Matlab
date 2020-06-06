@@ -8,7 +8,7 @@ function mergeOKStim(eventFile, OKFile, directory)
 
     % for testing
     if nargin < 3
-        directory = '~/Desktop/';
+        directory = '/Users/maunsell/Desktop/1180/';
         if nargin < 2
             eventFile = input('Matlab file from extractNEV: ', 's');
             if nargin < 1

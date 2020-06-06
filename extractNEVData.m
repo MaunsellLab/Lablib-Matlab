@@ -2,7 +2,7 @@ function [taskNames, taskEvents, taskSpikes] = extractNEVData(NEV)
 
 % function extractNEVData:
 % Extracts Lablib events and spikes from NEV array returned by readNEV
-% Breask the data into chunks associated with different Lablib task plugins
+% Breaks the data into chunks associated with different Lablib task plugins
 % Those chunks are returned in taskNames, taskEvents, and taskSpikes, which are the same length,
 %  and have one entry each for each run of a Lablib task.
 %%-------------------------------------------------------------------------------------------------
@@ -14,9 +14,9 @@ function [taskNames, taskEvents, taskSpikes] = extractNEVData(NEV)
 
     % for testing
     if nargin < 1
-        nevFile ='200217_OKernel_Test';      	% .nev file (don't include .nev extension)
-        directory = '/Users/maunsell/Desktop/';  % directory for .nev file
-        NEV = readNEV(strcat(directory, nevFile, '.nev'));      % read .nev file
+        nevFile = 'i0BL6-25_awake_plaidRFMap_20200221_1-02';                                   % .nev file (don't include extension)
+        directory = '/Users/maunsell/Documents/Experiments/20 Mouse Normalization/';            % directory for .nev file
+        NEV = readNEV([directory, nevFile, '.nev']);          	% read .nev file
     end
 
     % extract events

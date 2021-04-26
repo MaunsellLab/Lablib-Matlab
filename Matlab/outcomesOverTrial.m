@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Trial outcomes over the time course of individual trials %%%
 
-function outcomesOverTrialLogical(dParams, plotIndex, file, trials, indices, trialStructs)
+function outcomesOverTrial(dParams, plotIndex, file, trials, indices, trialStructs)
 
   preStimMS = [trialStructs(:).preStimMS];
   hitTimes = preStimMS(indices.correct);

@@ -10,9 +10,9 @@ function dParams = RTHistogram(dParams, subplotIndex, file, trials, indices)
   allMissRTs = [trials(indices.miss).reactTimeMS];
   missRTs = allMissRTs(allMissRTs > 0);
   if isfield(file, 'responseLimitMS')
-    timeLimit = min(file.responseLimitMS, 5000);
+    timeLimit = file.responseLimitMS;
   elseif isfield(file, 'reactMS')
-    timeLimit = min(file.reactMS, 5000);
+    timeLimit = file.reactMS;
   else
     timeLimit = 1000;
   end

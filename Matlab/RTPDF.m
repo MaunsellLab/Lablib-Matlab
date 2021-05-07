@@ -22,7 +22,7 @@ function RTPDF(dParams, subplotIndex, file, trials, indices, trialStructs)
   if (pFA > 0 && pFA < 1 && pH > 0 && pH < 1)
     [dP, ~, beta] = dPrime(pH, pFA);
     betaStr = '\beta';
-    text(0.05, 0.95, sprintf('%.1f spont/s\nd'': %.1f\n%s:  %.1f', releaseRateS, dP, betaStr, beta), ...
+    text(0.05, 0.95, sprintf('%.2f spont/s\nd'': %.1f\n%s:  %.1f', releaseRateS, dP, betaStr, beta), ...
       'units', 'normalized', 'horizontalAlignment', 'left', 'verticalAlignment', 'top');
   end
   % set the scale and add time markers for the stimulus and response limits

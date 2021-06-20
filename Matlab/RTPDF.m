@@ -29,7 +29,7 @@ function RTPDF(dParams, subplotIndex, file, trials, indices, trialStructs)
   if isfield(file, 'responseLimitMS')
     timeLimit = min(file.responseLimitMS, 5000);
   elseif isfield(file, 'reactMS')
-    timeLimit = min(file.reactMS, 5000);
+    timeLimit = file.reactMS;
   else
     timeLimit = 1000;
   end

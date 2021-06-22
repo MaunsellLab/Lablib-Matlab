@@ -9,10 +9,10 @@ function dParams = RTHistogram(dParams, subplotIndex, file, trials, indices)
   earlyRTs = [trials(indices.fa).reactTimeMS];
   allMissRTs = [trials(indices.miss).reactTimeMS];
   missRTs = allMissRTs(allMissRTs > 0);
-  if isfield(file, 'responseLimitMS')
-    timeLimit = file.responseLimitMS;
-  elseif isfield(file, 'reactMS')
+  if isfield(file, 'reactMS')
     timeLimit = file.reactMS;
+  elseif isfield(file, 'responseLimitMS')
+    timeLimit = file.responseLimitMS;
   else
     timeLimit = 1000;
   end
@@ -36,11 +36,11 @@ function dParams = RTHistogram(dParams, subplotIndex, file, trials, indices)
       llH = plot(double(file.tooFastMS) * [1 1], yLimits, 'k--');
       set(llH, 'Color', 0.5 * [0 1 0]);
     end
-    if isfield(file, 'rewardedLimitMS')
-      llH = plot(double(file.rewardedLimitMS) * [1 1], yLimits, 'r--');
-      set(llH, 'Color', 0.5 * [1 0 0]);
-    elseif isfield(file, 'reactMS')
+    if isfield(file, 'reactMS')
       llH = plot(double(file.reactMS) * [1 1], yLimits, 'r--');
+      set(llH, 'Color', 0.5 * [1 0 0]);
+    elseif isfield(file, 'rewardedLimitMS')
+      llH = plot(double(file.rewardedLimitMS) * [1 1], yLimits, 'r--');
       set(llH, 'Color', 0.5 * [1 0 0]);
     end
     if isfield(file, 'responseLimitMS')

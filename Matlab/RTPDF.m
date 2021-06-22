@@ -26,10 +26,10 @@ function RTPDF(dParams, subplotIndex, file, trials, indices, trialStructs)
       'units', 'normalized', 'horizontalAlignment', 'left', 'verticalAlignment', 'top');
   end
   % set the scale and add time markers for the stimulus and response limits
-  if isfield(file, 'responseLimitMS')
-    timeLimit = min(file.responseLimitMS, 5000);
-  elseif isfield(file, 'reactMS')
+  if isfield(file, 'reactMS')
     timeLimit = file.reactMS;
+  elseif isfield(file, 'responseLimitMS')
+    timeLimit = file.responseLimitMS;
   else
     timeLimit = 1000;
   end

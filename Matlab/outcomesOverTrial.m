@@ -29,24 +29,37 @@ function outcomesOverTrial(dParams, plotIndex, file, trials, indices, trialStruc
   subplot(dParams.plotLayout{:}, plotIndex);
   cla;
   hold on;
-  trialBins = max(10, length(trials) / 20);                    	% 10 or more bins
+  trialBins = max(10, length(trials) / 20) ;                   	% 10 or more bins
   set(gca, 'XLim', [1 trialBins]);
   if isfield(file, 'responseLimitMS')
-    timeRangeMS = file.preStimMaxMS + file.responseLimitMS;
-    minStimXPos = file.preStimMinMS / timeRangeMS * trialBins + 1;
-    maxStimXPos = file.preStimMaxMS / timeRangeMS * trialBins + 1;
-    if maxStimXPos > minStimXPos
-      set(gca,'XTick', [1, minStimXPos, maxStimXPos, trialBins]);
-      set(gca,'XTickLabel',{'0', sprintf('%d', file.preStimMinMS), sprintf('%d', file.preStimMaxMS), ...
-            sprintf('%d', timeRangeMS)});
+  timeRangeMS = file.preStimMaxMS + file.responseLimitMS;
+  minStimXPos = file.preStimMinMS / timeRangeMS * (trialBins - 1) + 1;
+  maxStimXPos = file.preStimMaxMS / timeRangeMS * (trialBins - 1) + 1;
+    if minStimXPos >= maxStimXPos
+        if maxStimXPos >= trialBins
+            maxStimXPos = trialBins;
+            set(gca,'XTick', [1, trialBins]);
+            set(gca,'XTickLabel',{'0', sprintf('%d', timeRangeMS)});
+        else
+            set(gca,'XTick', [1, maxStimXPos, trialBins]);
+            set(gca,'XTickLabel',{'0', sprintf('%d', file.preStimMaxMS), sprintf('%d', timeRangeMS)});
+        end
+        minStimXPos = maxStimXPos;
     else
-      set(gca,'XTick', [1, maxStimXPos, trialBins]);
-      set(gca,'XTickLabel',{'0', sprintf('%d', file.preStimMaxMS), sprintf('%d', timeRangeMS)});
+        if maxStimXPos >= trialBins
+            maxStimXPos = trialBins;
+            set(gca,'XTick', [1, minStimXPos, trialBins]);
+            set(gca,'XTickLabel',{'0', sprintf('%d', file.preStimMinMS), sprintf('%d', timeRangeMS)});
+        else
+            set(gca,'XTick', [1, minStimXPos, maxStimXPos, trialBins]);
+            set(gca,'XTickLabel',{'0', sprintf('%d', file.preStimMinMS), sprintf('%d', file.preStimMaxMS), ...
+                sprintf('%d', timeRangeMS)});
+        end
     end
   else
     timeRangeMS = max(file.preStimMaxMS, 1);
-    minStimXPos = file.preStimMinMS / timeRangeMS * trialBins + 1;
-    maxStimXPos = file.preStimMaxMS / timeRangeMS * trialBins + 1;
+    minStimXPos = file.preStimMinMS / timeRangeMS * (trialBins - 1) + 1;
+    maxStimXPos = trialBins;
     set(gca,'XTick', [1, trialBins]);
     set(gca,'XTickLabel',{'0', sprintf('%d', timeRangeMS)});  
   end

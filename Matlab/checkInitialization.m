@@ -20,6 +20,7 @@ function [inited, dParams, file, trials] = checkInitialization(dParams, file, tr
       file.subjectNumber = file.subjectNumber(end);
   end
   % ensure that every trial has a trialEnd
+  if ~isempty(trials) && ~isfield(trials, 'trialEnd')
   numMissingEnds = length(trials) - length([trials(:).trialEnd]);
   if numMissingEnds > 0
     for t = 1:length(trials)

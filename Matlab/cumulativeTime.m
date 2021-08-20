@@ -2,8 +2,10 @@ function cumulativeTime(dParams, subplotIndex, trials)
 %
 % Display the work efficiency of the subject as a percent of maximum efficiency
 %
-  minRunTimeS = [trials(:).minRunTimeS] - trials(1).minRunTimeS(1);
-  totalRunTimeS = [trials(:).totalRunTimeS] - trials(1).totalRunTimeS(1);
+  minRunTimeS = [trials(:).minRunTimeS];
+  minRunTimeS = minRunTimeS - min(minRunTimeS);
+  totalRunTimeS = [trials(:).totalRunTimeS];
+  totalRunTimeS = [trials(:).totalRunTimeS] - min(totalRunTimeS);
   axisHandle = subplot(dParams.plotLayout{:}, subplotIndex);
   cla;
   hold off;

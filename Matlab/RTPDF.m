@@ -5,6 +5,7 @@ function RTPDF(dParams, subplotIndex, file, trials, indices, trialStructs)
   cla;
   correctRTs = [trials(indices.correct).reactTimeMS];
   earlyRTs = [trials(indices.fa).reactTimeMS];
+  earlyRTs(earlyRTs > 1000) = 0;
   missRTs = [trials(indices.miss).reactTimeMS];
   allRTs = [correctRTs, earlyRTs, missRTs];
   if ~isempty(allRTs)

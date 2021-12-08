@@ -20,9 +20,9 @@ function drawText(taskName, dParams, file, trials, indices)
   else
       headerText{1} = '(missing date field)';
   end
-  if isfield(trials(:), 'rewardUL')
+  if isfield(trials(:), 'reward')
       headerText{length(headerText) + 1} = sprintf('%.0f minutes, %.0f %s', ...
-          (trials(end).totalRunTimeS - trials(1).totalRunTimeS) / 60.0, sum([trials(:).rewardUL]), muStr);
+          (trials(end).totalRunTimeS - trials(1).totalRunTimeS) / 60.0, sum([trials(:).reward]), muStr);
   else
       headerText{length(headerText) + 1} = sprintf('%.0f minutes', ...
           (trials(end).totalRunTimeS - trials(1).totalRunTimeS) / 60.0);

@@ -33,13 +33,13 @@ function [taskNames, taskEvents, taskSpikes] = extractNEVData(NEV)
   startIndices = find(codes == startCode);                    % get the trial starts
   events = struct([]);
   for t = 1:length(startIndices)                              % for each trial...
-    index = startIndices(t);                                % event for trial start
+    index = startIndices(t);                                  % event for trial start
     eventCounts = zeros(1, length(codes));
     events(t).trialStart.timeS = timeS(index);
     events(t).trialStart.data = data(index);
     while true
-      index = index + 1;                                  % advance to next event
-      if index > size(data, 1)                            % end of data, we're done;
+      index = index + 1;                                      % advance to next event
+      if index > size(data, 1)                                % end of data, we're done;
         break;
       end
       if codes(index) == endCode                          % end of trial, process & quit            

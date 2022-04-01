@@ -16,7 +16,7 @@ function [taskNames, taskEvents, taskSpikes] = extractNEVData(NEV)
 % addpath('/Users/chery/Documents/Grad School/Maunsell Lab/Analysis/MTCAN/NEV/');
   % for testing
   if nargin < 1
-    nevFile = 'datafile002';                        % .nev file (no file extension)
+    nevFile = 'testing_220331001';                        % .nev file (no file extension)
     directory = '/Users/maunsell/Desktop/';  % directory for .nev file
     NEV = readNEV([directory, nevFile, '.nev']);              % read .nev file
   end

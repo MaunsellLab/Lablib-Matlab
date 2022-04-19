@@ -16,7 +16,7 @@ function [taskNames, taskEvents, taskSpikes] = extractNEVData(NEV)
 % addpath('/Users/chery/Documents/Grad School/Maunsell Lab/Analysis/MTCAN/NEV/');
   % for testing
   if nargin < 1
-    nevFile = 'testing_220331001';                        % .nev file (no file extension)
+    nevFile = 'testing_220408';                        % .nev file (no file extension)
     directory = '/Users/maunsell/Desktop/';  % directory for .nev file
     NEV = readNEV([directory, nevFile, '.nev']);              % read .nev file
   end
@@ -84,8 +84,8 @@ function [taskNames, taskEvents, taskSpikes] = extractNEVData(NEV)
     taskNames = cell(1, length(taskSet) * length(settingsSet)); % names of existing setting-tasks, in order
     for t = 1:length(taskSet)
       for s = 1:length(settingsSet)
-        taskSettings{t, s} = taskCodes == taskSet(t) & settingsCodes == settingsSet(s);
-        if sum(taskSettings{t, s}) > 0                        % existing setting-task, save a name for it
+        taskSettings{s, t} = taskCodes == taskSet(t) & settingsCodes == settingsSet(s);
+        if sum(taskSettings{s, t}) > 0                        % existing setting-task, save a name for it
           cases = cases + 1;
           taskNames{cases} = sprintf('%s%d', dict.taskNames{taskSet(t)}, settingsSet(s));
         end
@@ -107,12 +107,13 @@ function [taskNames, taskEvents, taskSpikes] = extractNEVData(NEV)
   % Now we've sorted out the setting-tasks, bundle the trial events and spikes for each.
   taskEvents = cell(1, cases);
   taskSpikes = cell(1, cases);
+  taskIndex = 1;
   for t = 1:length(taskSet)
     for s = 1:length(settingsSet)
       if sum(taskSettings{s, t}) == 0                         % not an existing settings-task combination
         continue;
       end
-      taskEvents{t} = events(taskSettings{s, t});             % extract the events for this settings-task combination
+      taskEvents{taskIndex} = events(taskSettings{s, t});             % extract the events for this settings-task combination
       firstTrialIndex = find(taskSettings{s, t} > 0, 1, 'first');
       lastTrialIndex = find(taskSettings{s, t} > 0, 1, 'last');
       startTime = taskCodesStruct(firstTrialIndex).time;       % startTime of settings-task run
@@ -121,7 +122,8 @@ function [taskNames, taskEvents, taskSpikes] = extractNEVData(NEV)
       else
         endTime = inf;
       end
-      taskSpikes{t} = spikes(spikes(:,3) >= startTime & spikes(:,3) < endTime, :);    % get the settings-task spikes
+      taskSpikes{taskIndex} = spikes(spikes(:,3) >= startTime & spikes(:,3) < endTime, :);    % get the settings-task spikes
+      taskIndex = taskIndex + 1;
     end
   end
     

@@ -20,7 +20,9 @@ classdef taskDict < handle
                 twoChar = obj.letters{index};
                 obj.codes(index) = uint16(twoChar(1)) * 2^8 + uint16(twoChar(2)) + 2^15;
             end
-            obj.taskNames = {'OPA', 'PRF', 'GRF', 'OP', 'OK', 'ID', 'SQ', 'MTC', 'TR', 'PO', 'MTN', 'OKP'};
+            obj.taskNames = {'OPA', 'PRF', 'GRF', 'OP', 'OK', 'ID', 'SQ', 'MTC', 'TR', 'PO', 'MTN', 'OKP'...
+                'IDP', 'VFM', 'MTO'
+            };
         end
     end
     

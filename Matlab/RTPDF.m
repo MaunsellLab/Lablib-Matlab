@@ -4,9 +4,16 @@ function RTPDF(dParams, subplotIndex, file, trials, indices, trialStructs)
   subplot(dParams.plotLayout{:}, subplotIndex);
   cla;
   correctRTs = [trials(indices.correct).reactTimeMS];
-  earlyRTs = [trials(indices.fa).reactTimeMS];
-  earlyRTs(earlyRTs > 1000) = 0;
   missRTs = [trials(indices.miss).reactTimeMS];
+  % There was a bug in LLBehaveMonitor that truncated the milliseconds off
+  % the RT for FAs. This made the mean of these FAs 500 ms too small.  We
+  % apply a correction to get back to an approximation of the correct mean.
+  % FAs during the tooFast portion of the RT window were handled correctly.
+  % The bug was fixed at version 2.0 of the plugins using Matlab.
+  if ~isfield(file, 'version') || file.version < 2.0
+    earlyRTs = [trials(indices.fa).reactTimeMS] + 500;
+  end
+  earlyRTs(earlyRTs > 1000) = 0;
   allRTs = [correctRTs, earlyRTs, missRTs];
   if ~isempty(allRTs)
     cdfplot(allRTs);

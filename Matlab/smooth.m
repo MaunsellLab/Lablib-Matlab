@@ -261,7 +261,6 @@ function c = lowess(x,y, span, method, robust, iter)
 %    (Dec.,1979), pp. 829-836.
 %    http://www.math.tau.ac.il/~yekutiel/MA%20seminar/Cleveland%201979.pdf
 
-
 n = length(y);
 span = floor(span);
 span = min(span,n);
@@ -296,7 +295,6 @@ end
 % cftool).
 ws = warning( 'off', 'MATLAB:rankDeficientMatrix' );
 cleanup = onCleanup( @() warning( ws ) );
-
 
 ynan = isnan(y);
 anyNans = any(ynan(:));

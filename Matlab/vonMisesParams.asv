@@ -1,0 +1,18 @@
+function p = vonMisesParams(xDeg, yData)
+
+% returns a cell array with the params for a Von Mise fit to the input data
+% p{1} = thetaDeg
+% p{2} = kappa
+% p{3} = amplitude
+% p{4} = baseline
+
+  xRad = circ_ang2rad(xDeg);
+  [thetaRad, kappa] = circ_vmpar(xRad, yData);
+  vmFit = circ_vmpdf(xRad, thetaRad, kappa)
+  coef = polyfit(vmFit, yData, 1);
+  p = {circ_rad2ang(thetaRad), kappa, coef(1), coef(2)};
+  disp(thetaDeg);
+  disp(kappa);
+  yData
+  % yFit = vmFit * coefficients(1) + coefficients(2)
+   

@@ -20,8 +20,31 @@ classdef taskDict < handle
                 twoChar = obj.letters{index};
                 obj.codes(index) = uint16(twoChar(1)) * 2^8 + uint16(twoChar(2)) + 2^15;
             end
-            obj.taskNames = {'OPA', 'PRF', 'GRF', 'OP', 'OK', 'ID', 'SQ', 'MTC', 'TR', 'PO', 'MTN', 'OKP'...
-                'IDP', 'VFM', 'MTO', 'IDN', 'TO', 'MTD', 'OM', 'SDT', 'IDM', 'DRF', 'IDO', 'MTS'
+obj.taskNames = {
+    'OPA',
+    'PRF',
+    'GRF',
+    'OP',
+    'OK',
+    'ID',
+    'SQ',
+    'MTC',
+    'TR',
+    'PO',
+    'MTN',
+    'OKP'...
+    'IDP',
+    'VFM',
+    'MTO',
+    'IDN',
+    'TO',
+    'MTD',
+    'OM',
+    'SDT',
+    'IDO',
+    'DRF',
+    'ID',
+    'MTS'
             };
         end
     end
@@ -70,6 +93,7 @@ classdef taskDict < handle
             {"saccade",            "SA", 1.0};...
             {"settingsCode",       "SC", 1.0};...
             {"spatialFreq",        "SF", 0.01};...
+            {"speed",              "SP", 0.1};...
             {"spatialFreq0",       "S0", 0.01};...
             {"spatialFreq1",       "S1", 0.01};...
             {"sigma",              "SI", 0.1};...

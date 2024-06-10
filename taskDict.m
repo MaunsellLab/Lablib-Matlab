@@ -45,6 +45,7 @@ obj.taskNames = {
     'DRF',
     'ID',
     'MTS'
+    'STC'
             };
         end
     end
